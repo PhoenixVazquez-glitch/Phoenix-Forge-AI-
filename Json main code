@@ -1,0 +1,243 @@
+package.json
+{
+  "name": "landscape-forge-ai",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "npm@10.8.2",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:migrate": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.9.0",
+    "typescript": "^5.8.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4"
+  }
+}
+next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = { images: { unoptimized: false } }
+export default nextConfig
+tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "types": ["node"]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+prisma/schema.prisma
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  name String?
+  avatarUrl String?
+  role String @default("member")
+  points Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts Post[]
+  referrals Referral[]
+}
+
+model Post {
+  id String @id @default(cuid())
+  title String
+  content String?
+  imageUrl String?
+  reactions Int @default(0)
+  createdAt DateTime @default(now())
+  authorId String
+  user User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Referral {
+  id String @id @default(cuid())
+  code String @unique
+  referrerId String
+  referredEmail String?
+  status String @default("pending")
+  credit Int @default(0)
+  createdAt DateTime @default(now())
+  referrer User @relation(fields: [referrerId], references: [id], onDelete: Cascade)
+}
+
+model Template {
+  id String @id @default(cuid())
+  name String
+  description String?
+  trade String
+  status String @default("draft")
+  createdAt DateTime @default(now())
+}
+app/layout.tsx
+export const metadata = { title: "Landscape Forge AI", description: "Vercel-ready landscape and trades AI platform" }
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body style={{ margin: 0, fontFamily: 'Inter, Arial, sans-serif', background: '#f7faf7', color: '#142015' }}>
+        {children}
+      </body>
+    </html>
+  )
+}
+app/page.tsx
+const cards = [
+  { t: 'Template Builder', d: 'Manual + voice AI workflows' },
+  { t: 'Profiles', d: 'Avatar, bio, trade, portfolio' },
+  { t: 'Community', d: 'Reactions, follows, comments' },
+  { t: 'Referrals', d: 'Credits and badges' }
+]
+
+export default function Page() {
+  return (
+    <main style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
+      <section style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontSize: 56, lineHeight: 1.02, margin: '0 0 12px' }}>Landscape Forge AI</h1>
+          <p style={{ fontSize: 18, maxWidth: 620, opacity: .82 }}>
+            A premium Vercel-ready SaaS for landscape and trade templates with AI, profiles, referrals, and community features.
+          </p>
+          <div style={{ display: 'flex', gap: 12, marginTop: 20, flexWrap: 'wrap' }}>
+            <a href="#features" style={btn}>Explore Features</a>
+            <a href="#deploy" style={btn2}>Deploy Notes</a>
+          </div>
+        </div>
+
+        <div style={mock}>
+          <div style={phone}>
+            <div style={{ fontSize: 12, opacity: .65 }}>Plant Animations</div>
+            <div style={img}></div>
+            <div style={{ fontWeight: 700, marginTop: 8 }}>Example Hardscape Animation</div>
+            <div style={{ fontSize: 12, opacity: .75 }}>Hardscape</div>
+            <div style={{ height: 14 }}></div>
+            <div style={img2}></div>
+            <div style={{ fontWeight: 700, marginTop: 8 }}>Example Lighting Animation</div>
+            <div style={{ fontSize: 12, opacity: .75 }}>Lighting</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" style={{ marginTop: 48, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))' }}>
+        {cards.map(c => (
+          <article key={c.t} style={box}>
+            <h3 style={{ margin: '0 0 8px' }}>{c.t}</h3>
+            <p style={{ margin: 0, opacity: .8 }}>{c.d}</p>
+          </article>
+        ))}
+      </section>
+
+      <section id="deploy" style={{ marginTop: 48, ...box }}>
+        <h2 style={{ marginTop: 0 }}>Vercel-ready body</h2>
+        <ul>
+          <li>Next.js app router</li>
+          <li>Prisma + Postgres</li>
+          <li>Optional analytics, speed insights, and observability hooks</li>
+          <li>Click-to-accept terms and ownership protection</li>
+        </ul>
+        <p style={{ marginBottom: 0, opacity: .8 }}>
+          Add Vercel env vars: DATABASE_URL, NEXT_PUBLIC_APP_URL, STRIPE_SECRET_KEY, and any AI provider keys.
+        </p>
+      </section>
+    </main>
+  )
+}
+
+const btn = { padding: '12px 16px', borderRadius: 999, background: '#1f7a3b', color: '#fff', textDecoration: 'none' } as const
+const btn2 = { padding: '12px 16px', borderRadius: 999, border: '1px solid #cbd5cb', color: '#142015', textDecoration: 'none' } as const
+const box = { background: '#fff', border: '1px solid #e5ebe5', borderRadius: 20, padding: 20, boxShadow: '0 10px 30px rgba(0,0,0,.04)' } as const
+const mock = { ...box, padding: 16, background: 'linear-gradient(180deg,#dff3e4,#fff)' } as const
+const phone = { background: '#fff', borderRadius: 32, padding: 18, border: '10px solid #1c1c1c', minHeight: 420 }
+const img = { height: 150, borderRadius: 16, background: 'linear-gradient(135deg,#c18b55,#7cb36b)' }
+const img2 = { height: 150, borderRadius: 16, background: 'linear-gradient(135deg,#06121f,#ff7a59)' }
+app/terms/page.tsx
+export default function TermsPage() {
+  return (
+    <main style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
+      <h1>Terms</h1>
+      <p>By using this platform, you accept the ownership, license, referral, and liability terms defined by the operator.</p>
+    </main>
+  )
+}
+lib/prisma.ts
+import { PrismaClient } from "@prisma/client"
+
+const g = globalThis as unknown as { prisma?: PrismaClient }
+export const prisma = g.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== "production") g.prisma = prisma
+middleware.ts
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(req: NextRequest) {
+  return NextResponse.next()
+}
+
+export const config = { matcher: ["/app/:path*", "/profile/:path*", "/community/:path*", "/admin/:path*"] }
+pages/api/health.ts
+import type { NextApiRequest, NextApiResponse } from "next"
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.status(200).json({ ok: true, service: "Landscape Forge AI", time: new Date().toISOString() })
+}
+.env.example
+DATABASE_URL=postgresql://user:password@host:5432/landscapeforge
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXTAUTH_SECRET=replace_me
+README.md
+# Landscape Forge AI
+
+Deploy to Vercel with Node 18+, a Postgres database, and the env vars from `.env.example`.
+
+## Install
+```bash
+npm install
+Database
+npx prisma generate
+npx prisma db push
+Run
+npm run dev
+Deploy
+Push to GitHub
+Import into Vercel
+Add env vars
+Deploy
+
+## Run it
+After creating the files:
+```bash
+npm install
+npx prisma generate
+npx prisma db push
+npm run dev
