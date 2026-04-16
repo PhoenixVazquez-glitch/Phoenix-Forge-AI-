@@ -1,0 +1,197 @@
+lib/auth.ts
+export function requireAuth() {
+  return { userId: "demo-user", role: "member" }
+}
+components/Nav.tsx
+export default function Nav() {
+  return (
+    <nav style={{ display: "flex", gap: 12, flexWrap: "wrap", padding: 16, borderBottom: "1px solid #e5ebe5", background: "#fff" }}>
+      <a href="/">Home</a>
+      <a href="/profile">Profile</a>
+      <a href="/community">Community</a>
+      <a href="/referrals">Referrals</a>
+      <a href="/terms">Terms</a>
+    </nav>
+  )
+}
+app/profile/page.tsx
+import Nav from "../../components/Nav"
+
+export default function ProfilePage() {
+  return (
+    <main>
+      <Nav />
+      <section style={wrap}>
+        <div style={card}>
+          <div style={avatar}>LF</div>
+          <h1>Profile</h1>
+          <p>Avatar, bio, trade, location, portfolio, badges, and points.</p>
+          <ul>
+            <li>Trade: Landscape Designer</li>
+            <li>Points: 120</li>
+            <li>Badges: Top Creator, Verified Pro</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const wrap = { padding: 24, maxWidth: 960, margin: "0 auto" } as const
+const card = { background: "#fff", border: "1px solid #e5ebe5", borderRadius: 20, padding: 24 } as const
+const avatar = { width: 72, height: 72, borderRadius: 999, display: "grid", placeItems: "center", background: "#1f7a3b", color: "#fff", fontWeight: 700, fontSize: 24 } as const
+app/community/page.tsx
+import Nav from "../../components/Nav"
+
+export default function CommunityPage() {
+  return (
+    <main>
+      <Nav />
+      <section style={wrap}>
+        <h1>Community</h1>
+        <div style={{ display: "grid", gap: 16 }}>
+          <article style={card}>
+            <h3>Modern pool layout idea</h3>
+            <p>Shared by a user in Phoenix.</p>
+            <p>Reactions: 👍 14 ❤️ 6 🔥 3</p>
+          </article>
+          <article style={card}>
+            <h3>Hardscape lighting template</h3>
+            <p>Great for evening visibility and premium presentation.</p>
+            <p>Reactions: 👍 21 💡 9</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const wrap = { padding: 24, maxWidth: 960, margin: "0 auto" } as const
+const card = { background: "#fff", border: "1px solid #e5ebe5", borderRadius: 20, padding: 24 } as const
+app/referrals/page.tsx
+import Nav from "../../components/Nav"
+
+export default function ReferralsPage() {
+  return (
+    <main>
+      <Nav />
+      <section style={wrap}>
+        <div style={card}>
+          <h1>Referrals</h1>
+          <p>Invite friends and earn credits.</p>
+          <ul>
+            <li>Your code: LANDSCAPE10</li>
+            <li>Earn 100 points per qualified signup</li>
+            <li>Friend gets 1 free template build</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const wrap = { padding: 24, maxWidth: 960, margin: "0 auto" } as const
+const card = { background: "#fff", border: "1px solid #e5ebe5", borderRadius: 20, padding: 24 } as const
+app/admin/page.tsx
+import Nav from "../../components/Nav"
+
+export default function AdminPage() {
+  return (
+    <main>
+      <Nav />
+      <section style={wrap}>
+        <div style={card}>
+          <h1>Admin</h1>
+          <ul>
+            <li>Moderate posts</li>
+            <li>Review referrals</li>
+            <li>Manage users</li>
+            <li>Review reports</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const wrap = { padding: 24, maxWidth: 960, margin: "0 auto" } as const
+const card = { background: "#fff", border: "1px solid #e5ebe5", borderRadius: 20, padding: 24 } as const
+app/login/page.tsx
+import Nav from "../../components/Nav"
+
+export default function LoginPage() {
+  return (
+    <main>
+      <Nav />
+      <section style={wrap}>
+        <div style={card}>
+          <h1>Login</h1>
+          <form>
+            <input placeholder="Email" style={input} />
+            <input placeholder="Password" type="password" style={input} />
+            <button style={button}>Login</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const wrap = { padding: 24, maxWidth: 540, margin: "0 auto" } as const
+const card = { background: "#fff", border: "1px solid #e5ebe5", borderRadius: 20, padding: 24 } as const
+const input = { width: "100%", padding: 12, marginBottom: 12, borderRadius: 12, border: "1px solid #cfd8cf" } as const
+const button = { padding: "12px 16px", borderRadius: 999, border: "none", background: "#1f7a3b", color: "#fff" } as const
+app/register/page.tsx
+import Nav from "../../components/Nav"
+
+export default function RegisterPage() {
+  return (
+    <main>
+      <Nav />
+      <section style={wrap}>
+        <div style={card}>
+          <h1>Register</h1>
+          <form>
+            <input placeholder="Name" style={input} />
+            <input placeholder="Email" style={input} />
+            <input placeholder="Password" type="password" style={input} />
+            <button style={button}>Create account</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const wrap = { padding: 24, maxWidth: 540, margin: "0 auto" } as const
+const card = { background: "#fff", border: "1px solid #e5ebe5", borderRadius: 20, padding: 24 } as const
+const input = { width: "100%", padding: 12, marginBottom: 12, borderRadius: 12, border: "1px solid #cfd8cf" } as const
+const button = { padding: "12px 16px", borderRadius: 999, border: "none", background: "#1f7a3b", color: "#fff" } as const
+app/api/auth/register/route.ts
+import { NextResponse } from "next/server"
+
+export async function POST() {
+  return NextResponse.json({ ok: true, message: "register stub" })
+}
+app/api/auth/login/route.ts
+import { NextResponse } from "next/server"
+
+export async function POST() {
+  return NextResponse.json({ ok: true, message: "login stub" })
+}
+app/api/posts/route.ts
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  return NextResponse.json([{ id: "1", title: "Example post", reactions: 3 }])
+}
+
+export async function POST() {
+  return NextResponse.json({ ok: true })
+}
+app/api/referrals/route.ts
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  return NextResponse.json({ code: "LANDSCAPE10", credits: 100 })
+}
